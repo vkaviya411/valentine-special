@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Happy Valentine's Day ❤️</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    color:white;
+    overflow:hidden;
+    text-align:center;
+    background:linear-gradient(to right,#ff4b2b,#ff416c);
+}
+
+/* Sections */
+.section{ display:none; width:100%; height:100vh; padding:20px; position:relative; }
+.active{ display:flex; flex-direction:column; justify-content:center; align-items:center; }
+
+/* Buttons */
+button{
+    padding:10px 20px;
+    margin:10px;
+    border:none;
+    border-radius:20px;
+    font-size:16px;
+    cursor:pointer;
+}
+.green{ background:#00c853; color:white; }
+.blue{ background:#2979ff; color:white; }
+.red{ background:red; color:white; }
+.giftBtn{ background:#ff4d6d; color:white; }
+
+/* Snap Grid */
+.snap-container{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:40px;
+}
+.snap{
+    width:200px;
+    height:240px;
+    perspective:1000px;
+    cursor:pointer;
+}
+.snap-inner{
+    position:relative;
+    width:100%;
+    height:100%;
+    transition:transform 0.8s;
+    transform-style:preserve-3d;
+}
+.snap.flip .snap-inner{ transform:rotateY(180deg); }
+.snap-front, .snap-back{
+    position:absolute;
+    width:100%;
+    height:100%;
+    backface-visibility:hidden;
+    border-radius:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:16px;
+    padding:10px;
+    text-align:center;
+}
+.snap-front img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    border-radius:15px;
+}
+.snap-back{
+    background:white;
+    color:#ff4d6d;
+    transform:rotateY(180deg);
+    flex-direction:column;
+}
+
+/* Fireworks */
+#fireworksCanvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+    z-index:999;
+}
+
+/* Gift 1 & Final Song Background */
+#songSection, #finalSongSection{
+    background-size:contain;
+    background-position:center;
+    background-repeat:no-repeat;
+}
+#songSection::before, #finalSongSection::before{
+    content:"";
+    position:absolute;
+    top:0; left:0; right:0; bottom:0;
+    background:rgba(0,0,0,0.4);
+    z-index:0;
+}
+#songSection * , #finalSongSection * { position:relative; z-index:1; }
+
+/* Countdown Section */
+#countdownSection h1, #countdownSection h2{
+    margin:10px 0;
+    font-weight:bold;
+}
+#countdownSection h2{ font-size:80px; }
+
+/* Valentine Section */
+#valentineSection h1, #valentineSection h2, #valentineSection h3{ margin:10px 0; }
+</style>
+</head>
+<body>
+
+<!-- Countdown -->
+<div id="countdownSection" class="section active">
+    <h1>Countdown ❤️</h1>
+    <h2 id="count">5</h2>
+</div>
+
+<!-- Valentine Question -->
+<div id="valentineSection" class="section">
+    <h1>Happy Valentine's Day ❤️</h1>
+    <h3>You are the reason for my smile 💓</h3>
+    <h2>Will you be my Valentine?</h2>
+    <button class="green" onclick="yesClicked()">Yes</button>
+    <button class="blue" onclick="noClicked()">No</button>
+    <div id="popupMessage"></div>
+</div>
+
+<!-- Gift Section -->
+<div id="giftSection" class="section">
+    <h2>I have a surprise for you 🎁</h2>
+    <button class="giftBtn" onclick="openGift1()">Gift 1 💝</button>
+    <button class="giftBtn" onclick="openGift2()">Gift 2 💐</button>
+    <button class="giftBtn" onclick="openGift3()">Gift 3 🍫</button>
+</div>
+
+<!-- Gift 1 Name -->
+<div id="gift1Section" class="section">
+    <h2>Enter Your Name 💖</h2>
+    <input type="text" id="nameInput"><br><br>
+    <button onclick="checkName()">Submit</button>
+    <div id="nameError"></div>
+</div>
+
+<!-- Gift 1 Song -->
+<div id="songSection" class="section">
+    <h2>For You ❤️</h2>
+    <audio id="loveSong" controls>
+        <source src="Liril.mp3" type="audio/mpeg">
+    </audio><br>
+    <button id="nextBtn1" style="display:none;" onclick="goToWifePage()">Next ❤️</button>
+</div>
+
+<!-- Wife Name -->
+<div id="wifeSection" class="section">
+    <h2>Enter Your Wife Name 💖</h2>
+    <input type="text" id="wifeInput"><br><br>
+    <button onclick="checkWifeName()">Submit</button>
+    <div id="wifeError"></div>
+</div>
+
+<!-- Final Song -->
+<div id="finalSongSection" class="section">
+    <h2>Only for Liril ❤️</h2>
+    <audio id="kaviyaSong" controls>
+        <source src="kaviya.mp3" type="audio/mpeg">
+    </audio><br>
+    <button id="nextBtn2" style="display:none;" onclick="backToGifts()">Back to Gifts 🎁</button>
+</div>
+
+<!-- Gift 2 Snap Section -->
+<div id="gift2Section" class="section">
+    <h2>Click Each Snap 💖</h2>
+    <audio id="gift2Music" loop>
+        <source src="Liya.mp3" type="audio/mpeg">
+    </audio>
+    <div class="snap-container">
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image3.jpeg"></div>
+                <div class="snap-back">Will</div>
+            </div>
+        </div>
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image4.jpeg"></div>
+                <div class="snap-back">You</div>
+            </div>
+        </div>
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image5.jpeg"></div>
+                <div class="snap-back">Stay</div>
+            </div>
+        </div>
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image6.jpeg"></div>
+                <div class="snap-back">By My Side</div>
+            </div>
+        </div>
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image 7.jpeg"></div>
+                <div class="snap-back">Forever ❤️</div>
+            </div>
+        </div>
+        <div class="snap" onclick="flip(this)">
+            <div class="snap-inner">
+                <div class="snap-front"><img src="image8.jpeg"></div>
+                <div class="snap-back">
+                    Will You Stay By My Side Forever? 💕<br><br>
+                    <button class="green" onclick="answerYes(event)">Yes ❤️</button>
+                    <button class="red" onclick="answerNo(event)">No 😜</button>
+                </div>
+            </div>
+        </div>
+    </div><br>
+    <button onclick="backToGifts()">Back 🎁</button>
+</div>
+
+<!-- Gift 3 Video -->
+<div id="gift3Section" class="section">
+    <video id="videoPlayer" width="20%" controls></video><br><br>
+    <button id="nextVideoBtn" class="green" style="display:none;" onclick="nextVideo()">Next</button>
+    <button id="specialGiftBtn" class="green" style="display:none;" onclick="showFinalMessage()">Click this button and get your special gift</button>
+    <h2 id="finalMessage" style="display:none;">
+        Go and check your laptop bag 💖<br>
+        You will get my simple gift 🎁<br>
+        Love you ❤️
+    </h2>
+    <audio id="fireworksMusic" loop>
+        <source src="Liya.mp3" type="audio/mpeg">
+    </audio>
+    <canvas id="fireworksCanvas"></canvas>
+</div>
+
+<script>
+/* Countdown auto move */
+let count=5;
+let timer=setInterval(()=>{
+    count--;
+    document.getElementById("count").innerText=count;
+    if(count==0){
+        clearInterval(timer);
+        showSection("valentineSection");
+    }
+},1000);
+
+/* Show section helper */
+function showSection(id){
+    document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+/* Valentine logic */
+function yesClicked(){ showSection("giftSection"); }
+function noClicked(){ document.getElementById("popupMessage").innerText="You don't have option 😜 Click Yes 💕"; }
+
+/* Gift navigation */
+function openGift1(){ showSection("gift1Section"); }
+function openGift2(){
+    showSection("gift2Section");
+    let music=document.getElementById("gift2Music");
+    music.currentTime=0; music.play();
+}
+function backToGifts(){
+    showSection("giftSection");
+    let music=document.getElementById("gift2Music");
+    if(music){ music.pause(); music.currentTime=0; }
+}
+function openGift3(){ showSection("gift3Section"); playVideo(); }
+
+/* Gift 1 Flow with background */
+function checkName(){
+    let name=document.getElementById("nameInput").value;
+    if(name==="Liril Kumar Parthasarathy"){
+        showSection("songSection");
+        document.getElementById("songSection").style.backgroundImage="url('image1.jpeg')";
+        let song=document.getElementById("loveSong");
+        song.play();
+        song.onended=()=>document.getElementById("nextBtn1").style.display="inline-block";
+    } else document.getElementById("nameError").innerText="Type correct name or spelling ❌";
+}
+function goToWifePage(){ showSection("wifeSection"); }
+function checkWifeName(){
+    let wife=document.getElementById("wifeInput").value;
+    if(wife==="Kaviya Vadivel"){
+        showSection("finalSongSection");
+        document.getElementById("finalSongSection").style.backgroundImage="url('image2.jpeg')";
+        let song=document.getElementById("kaviyaSong");
+        song.play();
+        song.onended=()=>document.getElementById("nextBtn2").style.display="inline-block";
+    } else document.getElementById("wifeError").innerText="Type correct name or spelling ❌";
+}
+
+/* Gift 2 Flip */
+function flip(card){ card.classList.toggle("flip"); }
+function answerYes(e){ e.stopPropagation(); alert("I knew it 😍❤️ Forever starts now!"); }
+function answerNo(e){ e.stopPropagation(); alert("No option 😜 You are mine forever!"); }
+
+/* Gift 3 Video */
+let videos=["ours.mp4","Sukrithi.mp4","funny.mp4"];
+let index=0;
+function playVideo(){
+    let player=document.getElementById("videoPlayer");
+    player.src=videos[index];
+    player.play();
+    player.onended=function(){
+        if(index<videos.length-1) document.getElementById("nextVideoBtn").style.display="inline-block";
+        else document.getElementById("specialGiftBtn").style.display="inline-block";
+    }
+}
+function nextVideo(){ index++; document.getElementById("nextVideoBtn").style.display="none"; playVideo(); }
+
+/* Final Message + Fireworks */
+function showFinalMessage(){
+    document.getElementById("specialGiftBtn").style.display="none";
+    document.getElementById("finalMessage").style.display="block";
+    document.getElementById("fireworksMusic").play();
+    startFireworks();
+}
+function startFireworks(){
+    const canvas=document.getElementById("fireworksCanvas");
+    const ctx=canvas.getContext("2d");
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    let particles=[];
+    function create(){
+        let x=Math.random()*canvas.width;
+        let y=Math.random()*canvas.height/2;
+        for(let i=0;i<50;i++){
+            particles.push({x,y,dx:(Math.random()-0.5)*6,dy:(Math.random()-0.5)*6,life:100});
+        }
+    }
+    let interval=setInterval(create,500);
+    let animation=setInterval(()=>{
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        particles=particles.filter(p=>{
+            p.x+=p.dx; p.y+=p.dy; p.life--;
+            ctx.fillStyle="hsl("+Math.random()*360+",100%,50%)";
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,3,0,Math.PI*2);
+            ctx.fill();
+            return p.life>0;
+        });
+    },30);
+    setTimeout(()=>{ clearInterval(interval); clearInterval(animation); ctx.clearRect(0,0,canvas.width,canvas.height); },20000);
+}
+</script>
+</body>
+</html>
